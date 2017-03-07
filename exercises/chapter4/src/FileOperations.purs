@@ -2,8 +2,9 @@ module FileOperations where
 
 import Prelude
 
+import Control.MonadZero (guard)
 import Data.Path (Path, ls)
-import Data.Array (concatMap, (:), (..), filter, null)
+import Data.Array (concatMap, (:), (..), filter, length, null)
 import Data.Array.Partial (head, tail)
 import Data.Foldable (product)
 import Partial.Unsafe (unsafePartial)
@@ -48,8 +49,26 @@ removeNegatives arr =  (\n -> n >= 0) <$?> arr
 infix 8 filter as <$?>
 
 factors :: Int -> Array (Array Int)
-factors n = filter (\xs -> product xs == n) $ do
+factors n = do
   i <- 1 .. n
   j <- i .. n
+  guard $ i * j == n
   pure [i, j]
+
+isPrime :: Int -> Boolean
+isPrime n = (length $ factors n) == 1
+
+cartesianProduct :: forall a. Array a -> Array a -> Array (Array a)
+cartesianProduct a b = do
+  i <- a
+  j <- b
+  pure [i, j]
+
+triples :: Int -> Array (Array Int)
+triples n = do
+  a <- 1 .. n
+  b <- a .. n
+  c <- b .. n
+  guard $ a * a + b * b == c * c
+  pure [a, b, c]
 
