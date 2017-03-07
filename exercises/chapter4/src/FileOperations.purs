@@ -3,7 +3,7 @@ module FileOperations where
 import Prelude
 
 import Data.Path (Path, ls)
-import Data.Array (concatMap, (:), null)
+import Data.Array (concatMap, (:), filter, null)
 import Data.Array.Partial (head, tail)
 import Partial.Unsafe (unsafePartial)
 
@@ -38,3 +38,10 @@ countEvens arr =
         then 1
         else 0
 
+squares :: Array Number -> Array Number
+squares arr = (\n -> n * n) <$> arr
+
+removeNegatives :: Array Int -> Array Int
+removeNegatives arr =  (\n -> n >= 0) <$?> arr
+
+infix 8 filter as <$?>
