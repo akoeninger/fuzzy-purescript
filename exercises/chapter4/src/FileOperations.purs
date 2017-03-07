@@ -3,8 +3,9 @@ module FileOperations where
 import Prelude
 
 import Data.Path (Path, ls)
-import Data.Array (concatMap, (:), filter, null)
+import Data.Array (concatMap, (:), (..), filter, null)
 import Data.Array.Partial (head, tail)
+import Data.Foldable (product)
 import Partial.Unsafe (unsafePartial)
 
 fact :: Int -> Int
@@ -45,3 +46,10 @@ removeNegatives :: Array Int -> Array Int
 removeNegatives arr =  (\n -> n >= 0) <$?> arr
 
 infix 8 filter as <$?>
+
+factors :: Int -> Array (Array Int)
+factors n = filter (\xs -> product xs == n) $ do
+  i <- 1 .. n
+  j <- i .. n
+  pure [i, j]
+
