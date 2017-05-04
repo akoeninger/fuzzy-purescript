@@ -1,13 +1,15 @@
 module FileOperations where
 
-import Prelude
+import Prelude (bind, pure, ($), (*), (+), (-), (<$>), (==), (>=))
 
 import Control.MonadZero (guard)
 import Data.Path (Path, ls)
 import Data.Array (concatMap, (:), (..), filter, length, null)
 import Data.Array.Partial (head, tail)
 import Data.Foldable (product)
+import Data.Int (toNumber)
 import Partial.Unsafe (unsafePartial)
+import Math ((%))
 
 fact :: Int -> Int
 fact 0 = 1
@@ -71,4 +73,10 @@ triples n = do
   c <- b .. n
   guard $ a * a + b * b == c * c
   pure [a, b, c]
+
+factorize :: forall n. n -> Array(n)
+factorize n = do
+  i <- 1 .. n
+  guard $ n % i == 0
+  pure i
 
