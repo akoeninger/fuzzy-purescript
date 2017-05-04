@@ -1,10 +1,10 @@
 module FileOperations where
 
-import Prelude (bind, pure, ($), (*), (+), (-), (<$>), (==), (>=))
+import Prelude
 
 import Control.MonadZero (guard)
 import Data.Path (Path, ls)
-import Data.Array (concatMap, (:), (..), filter, length, null)
+import Data.Array
 import Data.Array.Partial (head, tail)
 import Data.Foldable (product)
 import Data.Int (toNumber)
@@ -74,9 +74,18 @@ triples n = do
   guard $ a * a + b * b == c * c
   pure [a, b, c]
 
-factorize :: forall n. n -> Array(n)
+factorize :: Int -> Array(Int)
 factorize n = do
   i <- 1 .. n
-  guard $ n % i == 0
+  guard $ toNumber(n) % toNumber(i) == toNumber(0)
   pure i
+
+factorization :: Int -> Array (Array Int)
+factorization n = [n] : do
+  x <- factorize n
+  guard $ x > 1 && x < n
+  xs <- factorization (n / x)
+  pure (x : xs)
+
+
 
