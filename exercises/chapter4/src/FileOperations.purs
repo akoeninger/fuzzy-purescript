@@ -6,14 +6,18 @@ import Control.MonadZero (guard)
 import Data.Path (Path, ls)
 import Data.Array
 import Data.Array.Partial (head, tail)
-import Data.Foldable (product)
-import Data.Int (toNumber)
 import Partial.Unsafe (unsafePartial)
+import Data.Foldable (product, foldl)
+import Data.Int (toNumber)
 import Math ((%))
 
 fact :: Int -> Int
 fact 0 = 1
 fact n = n * fact (n - 1)
+
+factTR :: Int -> Int -> Int
+factTR 0 acc = acc
+factTR n acc = factTR (n - 1) (acc * n)
 
 fib :: Int -> Int
 fib 0 = 1
@@ -87,5 +91,24 @@ factorization n = [n] : do
   xs <- factorization (n / x)
   pure (x : xs)
 
+reverse :: forall a. Array a -> Array a
+reverse = reverse' []
+  where
+    reverse' acc [] = acc
+    reverse' acc xs = reverse' (unsafePartial head xs : acc)
+                               (unsafePartial tail xs)
+allTrue :: Array(Boolean) -> Boolean
+allTrue bs = foldl (&&) true bs
 
+isFalseSingletonArray :: Array(Boolean) -> Boolean
+isFalseSingletonArray bs = foldl (==) false bs
 
+count :: forall a. (a -> Boolean) -> Array a -> Int
+count p = count' p 0
+  where
+    count' _ acc [] = acc
+    count' p acc xs = if p (unsafePartial head xs)
+                        then count' p (acc + 1) (unsafePartial tail xs)
+                        else count' p acc (unsafePartial tail xs)
+
+    
