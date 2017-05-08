@@ -111,4 +111,6 @@ count p = count' p 0
                         then count' p (acc + 1) (unsafePartial tail xs)
                         else count' p acc (unsafePartial tail xs)
 
+reverseFL :: forall a. Array a -> Array a
+reverseFL = foldl (\xs x -> [x] <> xs) []
     
