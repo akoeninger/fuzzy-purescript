@@ -3,7 +3,7 @@ module FileOperations where
 import Prelude
 
 import Control.MonadZero (guard)
-import Data.Path (Path, ls)
+import Data.Path (Path, ls, isDirectory)
 import Data.Array
 import Data.Array.Partial (head, tail)
 import Partial.Unsafe (unsafePartial)
@@ -113,4 +113,11 @@ count p = count' p 0
 
 reverseFL :: forall a. Array a -> Array a
 reverseFL = foldl (\xs x -> [x] <> xs) []
-    
+
+onlyFiles :: Path -> Array Path
+onlyFiles file = 
+  if isDirectory file
+    then do
+      child <- ls file
+      onlyFiles child
+    else [file]
