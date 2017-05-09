@@ -121,3 +121,8 @@ onlyFiles file =
       child <- ls file
       onlyFiles child
     else [file]
+
+onlyFiles' :: Path -> Array Path
+onlyFiles' = filter(isFile) <<< allFiles where
+  isFile = not <<< isDirectory
+
