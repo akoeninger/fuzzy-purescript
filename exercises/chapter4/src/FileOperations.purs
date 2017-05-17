@@ -126,3 +126,11 @@ onlyFiles' :: Path -> Array Path
 onlyFiles' = filter(isFile) <<< allFiles where
   isFile = not <<< isDirectory
 
+sizes :: Path -> Array (Maybe Int)
+sizes p = map (\f -> size f) (onlyFiles p)
+
+largestFile :: Path -> Maybe Int
+largestFile p = foldl (\acc mx ->
+  if (isJust acc)
+    then acc >>= (\a -> map (\x -> if (x > a) then x else a) mx) (Nothing) (sizes)
+
