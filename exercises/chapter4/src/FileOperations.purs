@@ -3,12 +3,13 @@ module FileOperations where
 import Prelude
 
 import Control.MonadZero (guard)
-import Data.Path (Path, ls, isDirectory)
+import Data.Path (Path, ls, isDirectory, size, root)
 import Data.Array
 import Data.Array.Partial (head, tail)
 import Partial.Unsafe (unsafePartial)
 import Data.Foldable (product, foldl)
 import Data.Int (toNumber)
+import Data.Maybe
 import Math ((%))
 
 fact :: Int -> Int
@@ -128,9 +129,9 @@ onlyFiles' = filter(isFile) <<< allFiles where
 
 sizes :: Path -> Array (Maybe Int)
 sizes p = map (\f -> size f) (onlyFiles p)
-
-largestFile :: Path -> Maybe Int
-largestFile p = foldl (\acc mx ->
-  if (isJust acc)
-    then acc >>= (\a -> map (\x -> if (x > a) then x else a) mx) (Nothing) (sizes)
+ 
+largestFile :: Path -> Maybe Path
+largestFile = foldl largeFile Nothing <<< onlyFiles' where
+  largeFile (Just x) y = if (size x) > (size y) then Just x else Just y
+  largeFile Nothing y = Just y
 
