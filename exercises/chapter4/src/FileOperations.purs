@@ -129,14 +129,17 @@ onlyFiles' = filter(isFile) <<< allFiles where
 
 sizes :: Path -> Array (Maybe Int)
 sizes p = map (\f -> size f) (onlyFiles p)
+
+compareFile :: (Maybe Int -> Maybe Int -> Boolean) -> Path -> Path -> Maybe Path
+compareFile op x y = if op (size x) (size y) then Just x else Just y 
  
 largestFile :: Path -> Maybe Path
 largestFile = foldl largeFile Nothing <<< onlyFiles' where
-  largeFile (Just x) y = if (size x) > (size y) then Just x else Just y
+  largeFile (Just x) y = compareFile (>) x y
   largeFile Nothing y = Just y
 
 smallestFile :: Path -> Maybe Path
 smallestFile = foldl smallFile Nothing <<< onlyFiles' where
-  smallFile (Just x) y = if (size x) < (size y) then Just x else Just y
+  smallFile (Just x) y = compareFile (<) x y
   smallFile Nothing y = Just y
 
