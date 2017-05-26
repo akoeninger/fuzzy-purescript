@@ -135,3 +135,8 @@ largestFile = foldl largeFile Nothing <<< onlyFiles' where
   largeFile (Just x) y = if (size x) > (size y) then Just x else Just y
   largeFile Nothing y = Just y
 
+smallestFile :: Path -> Maybe Path
+smallestFile = foldl smallFile Nothing <<< onlyFiles' where
+  smallFile (Just x) y = if (size x) < (size y) then Just x else Just y
+  smallFile Nothing y = Just y
+
