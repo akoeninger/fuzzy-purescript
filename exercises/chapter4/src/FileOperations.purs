@@ -1,16 +1,19 @@
 module FileOperations where
 
-import Prelude
+import Prelude (bind, map, not, pure, ($), (&&), (*), (+), (-), (/), (<), (<$>),
+  (<<<), (<>), (==), (>), (>=))
+
 
 import Control.MonadZero (guard)
-import Data.Path (Path, ls, isDirectory, size, root)
-import Data.Array
+import Data.Path (Path, filename, ls, isDirectory, size, root)
+import Data.Array (concatMap, filter, length, null, (..), (:))
 import Data.Array.Partial (head, tail)
 import Partial.Unsafe (unsafePartial)
-import Data.Foldable (product, foldl)
+import Data.Foldable (foldl)
 import Data.Int (toNumber)
-import Data.Maybe
+import Data.Maybe (Maybe(..))
 import Math ((%))
+
 
 fact :: Int -> Int
 fact 0 = 1
@@ -142,4 +145,11 @@ smallestFile :: Path -> Maybe Path
 smallestFile = foldl smallFile Nothing <<< onlyFiles' where
   smallFile (Just x) y = compareFile (<) x y
   smallFile Nothing y = Just y
+
+whereIs :: String -> Maybe Path
+whereIs n = head $ do
+      path <- allFiles root
+      child <- ls path
+      guard $ filename child == n
+      pure $ Just path
 
