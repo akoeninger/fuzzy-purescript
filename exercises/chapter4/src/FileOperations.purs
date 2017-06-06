@@ -6,7 +6,7 @@ import Prelude (bind, map, not, pure, ($), (&&), (*), (+), (-), (/), (<), (<$>),
 
 import Control.MonadZero (guard)
 import Data.Path (Path, filename, ls, isDirectory, size, root)
-import Data.Array (concatMap, filter, length, null, (..), (:))
+import Data.Array (concatMap, filter, length, index, null, (..), (:))
 import Data.Array.Partial (head, tail)
 import Partial.Unsafe (unsafePartial)
 import Data.Foldable (foldl)
@@ -147,9 +147,9 @@ smallestFile = foldl smallFile Nothing <<< onlyFiles' where
   smallFile Nothing y = Just y
 
 whereIs :: String -> Maybe Path
-whereIs n = head $ do
+whereIs n = ((index) $ do
       path <- allFiles root
       child <- ls path
       guard $ filename child == n
-      pure $ Just path
+      pure path)(0)
 
