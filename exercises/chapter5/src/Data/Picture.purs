@@ -122,9 +122,8 @@ bounds = foldl combine emptyBounds
 gcd :: Int -> Int -> Int
 gcd n 0 = n
 gcd 0 m = m
-gcd n m = if n > m
-           then gcd (n - m) m
-           else gcd n (m - n)
+gcd n m | n > m     =  gcd (n - m) m
+        | otherwise =  gcd n (m - n)
 
 fromString :: String -> Boolean
 fromString "true" = true
