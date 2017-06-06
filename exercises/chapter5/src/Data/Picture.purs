@@ -118,3 +118,19 @@ bounds = foldl combine emptyBounds
   where
   combine :: Bounds -> Shape -> Bounds
   combine b shape = shapeBounds shape \/ b
+
+gcd :: Int -> Int -> Int
+gcd n 0 = n
+gcd 0 m = m
+gcd n m = if n > m
+           then gcd (n - m) m
+           else gcd n (m - n)
+
+fromString :: String -> Boolean
+fromString "true" = true
+fromString _      = false
+
+toString :: Boolean -> String
+toString true = "true"
+toString false = "false"
+
