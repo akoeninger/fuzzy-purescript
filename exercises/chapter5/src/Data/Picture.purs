@@ -137,3 +137,9 @@ factorial :: Int -> Int
 factorial 0 = 1
 factorial n = n * factorial (n - 1)
 
+nChoosek :: Int -> Int -> Int
+nChoosek 0 k = 1
+nChoosek n 0 = 1
+nChoosek n k | n == k = 1
+nChoosek n k = nChoosek (n - 1) (k - 1) + nChoosek (n - 1) k
+ 
