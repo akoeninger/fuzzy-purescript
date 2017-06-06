@@ -133,3 +133,7 @@ toString :: Boolean -> String
 toString true = "true"
 toString false = "false"
 
+factorial :: Int -> Int
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+
