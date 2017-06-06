@@ -6,8 +6,8 @@ import Prelude (bind, map, not, pure, ($), (&&), (*), (+), (-), (/), (<), (<$>),
 
 import Control.MonadZero (guard)
 import Data.Path (Path, filename, ls, isDirectory, size, root)
-import Data.Array (concatMap, filter, length, index, null, (..), (:))
-import Data.Array.Partial (head, tail)
+import Data.Array (concatMap, head, filter, length, null, (..), (:))
+import Data.Array.Partial as DAPartial
 import Partial.Unsafe (unsafePartial)
 import Data.Foldable (foldl)
 import Data.Int (toNumber)
@@ -46,7 +46,7 @@ countEvens arr =
   if null arr
     then 0
     else
-      countEvens (unsafePartial tail arr) + if evenInt (unsafePartial head arr)
+      countEvens (unsafePartial DAPartial.tail arr) + if evenInt (unsafePartial DAPartial.head arr)
         then 1
         else 0
 
@@ -99,8 +99,8 @@ reverse :: forall a. Array a -> Array a
 reverse = reverse' []
   where
     reverse' acc [] = acc
-    reverse' acc xs = reverse' (unsafePartial head xs : acc)
-                               (unsafePartial tail xs)
+    reverse' acc xs = reverse' (unsafePartial DAPartial.head xs : acc)
+                               (unsafePartial DAPartial.tail xs)
 allTrue :: Array(Boolean) -> Boolean
 allTrue bs = foldl (&&) true bs
 
@@ -111,9 +111,9 @@ count :: forall a. (a -> Boolean) -> Array a -> Int
 count p = count' p 0
   where
     count' _ acc [] = acc
-    count' p acc xs = if p (unsafePartial head xs)
-                        then count' p (acc + 1) (unsafePartial tail xs)
-                        else count' p acc (unsafePartial tail xs)
+    count' pred acc xs = if pred (unsafePartial DAPartial.head xs)
+                        then count' pred (acc + 1) (unsafePartial DAPartial.tail xs)
+                        else count' pred acc (unsafePartial DAPartial.tail xs)
 
 reverseFL :: forall a. Array a -> Array a
 reverseFL = foldl (\xs x -> [x] <> xs) []
@@ -147,9 +147,9 @@ smallestFile = foldl smallFile Nothing <<< onlyFiles' where
   smallFile Nothing y = Just y
 
 whereIs :: String -> Maybe Path
-whereIs n = ((index) $ do
+whereIs n = head $ do
       path <- allFiles root
       child <- ls path
       guard $ filename child == n
-      pure path)(0)
+      pure path
 
