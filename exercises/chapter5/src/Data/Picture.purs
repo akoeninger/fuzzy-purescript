@@ -200,4 +200,20 @@ lzs xs = case sum xs of
            0 -> xs
            _ -> lzs (unsafePartial tail xs)
 
+-- Chapter 5.13 Using ADTs
+exampleLine :: Shape
+exampleLine = Line p1 p2
+  where
+    p1 :: Point
+    p1 = Point { x: 0.0, y: 0.0 }
+
+    p2 :: Point
+    p2 = Point { x: 100.0, y: 50.0 }
+
+centerCircle :: Shape
+centerCircle = Circle (Point { x, y }) radius
+  where
+    x = 0.0
+    y = 0.0
+    radius = 10.0
 
