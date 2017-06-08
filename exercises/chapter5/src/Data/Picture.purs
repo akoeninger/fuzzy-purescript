@@ -6,6 +6,7 @@ import Data.Array.Partial (tail)
 import Partial.Unsafe (unsafePartial)
 
 import Data.Foldable (foldl, sum)
+import Data.Maybe (Maybe(..))
 import Global as Global
 import Math as Math
 
@@ -192,8 +193,6 @@ fromSingleton _ [x] = x
 fromSingleton default _ = default
 
 -- Chapter 5.10 Case Expressions
-
-
 lzs :: Array Int -> Array Int
 lzs [] = []
 lzs xs = case sum xs of
@@ -211,9 +210,19 @@ exampleLine = Line p1 p2
     p2 = Point { x: 100.0, y: 50.0 }
 
 centerCircle :: Shape
-centerCircle = Circle (Point { x, y }) radius
-  where
-    x = 0.0
-    y = 0.0
-    radius = 10.0
+centerCircle = Circle (Point { x: 0.0, y: 0.0}) 10.0
 
+scaleBy2 :: Shape -> Shape
+scaleBy2 (Circle c r) = Circle c (r * 2.0)
+scaleBy2 (Rectangle c w h) = Rectangle c (w * 2.0) (h * 2.0)
+scaleBy2 (Line (Point start) (Point end)) = Line scaledStart scaledEnd
+  where
+    diff = { x: (end.x - start.x) / 2.0, y: (end.y - start.y) / 2.0 }
+    scaledStart = Point { x: start.x - diff.x, y: start.y - diff.y }
+    scaledEnd = Point { x: end.x + diff.x, y: end.y + diff.y }
+scaleBy2 (Text (Point loc) text) = Text (Point { x: loc.x * 2.0, y: loc.y * 2.0 }) text
+
+extractText :: Shape -> Maybe String
+extractText (Text loc text) = Just text
+extractText _ = Nothing
+ 
