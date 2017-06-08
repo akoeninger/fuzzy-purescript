@@ -2,7 +2,10 @@ module Data.Picture where
 
 import Prelude
 
-import Data.Foldable (foldl)
+import Data.Array.Partial (tail)
+import Partial.Unsafe (unsafePartial)
+
+import Data.Foldable (foldl, sum)
 import Global as Global
 import Math as Math
 
@@ -187,4 +190,14 @@ livesInLA' _ = false
 fromSingleton :: forall a. a -> Array a -> a
 fromSingleton _ [x] = x
 fromSingleton default _ = default
+
+-- Chapter 5.10 Case Expressions
+
+
+lzs :: Array Int -> Array Int
+lzs [] = []
+lzs xs = case sum xs of
+           0 -> xs
+           _ -> lzs (unsafePartial tail xs)
+
 
