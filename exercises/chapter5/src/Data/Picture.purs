@@ -142,4 +142,49 @@ nChoosek 0 k = 1
 nChoosek n 0 = 1
 nChoosek n k | n == k = 1
 nChoosek n k = nChoosek (n - 1) (k - 1) + nChoosek (n - 1) k
- 
+
+-- Chapter 5.6 Array Patterns
+
+isEmpty :: forall a. Array a -> Boolean
+isEmpty [] = true
+isEmpty _ = false
+
+takeFive :: Array Int -> Int
+takeFive [0, 1, a, b, _] = a * b
+takeFive _ = 0
+
+-- Chapter 5.7 Record Patterns and Row Polymorphism
+showPerson :: { first :: String, last :: String } -> String
+showPerson { first: x, last: y } = y <> ", " <> x
+
+-- Chapter 5.8 Nested Patterns
+type Address = { street :: String, city :: String }
+type Person = { name :: String, address :: Address }
+
+livesInLA :: Person -> Boolean
+livesInLA { address: { city: "Los Angeles" } } = true
+livesInLA _ = false
+
+-- Chapter 5.9 Named Patterns
+sortPair :: Array Int -> Array Int
+sortPair arr@[x, y]
+  | x <= y = arr
+  | otherwise = [y, x]
+sortPair arr = arr
+
+-- Chapter 5.9 Exercises
+sameCity :: Person -> Person -> Boolean
+sameCity { address : { city: x } } { address: { city: y } } = x == y
+
+-- Ex 2. Most general type of sameCity would be to any record with a city field
+sameCity' :: { city :: String } -> { city :: String } -> Boolean
+sameCity' { city: x } { city: y } = x == y 
+
+livesInLA' :: { city :: String } -> Boolean
+livesInLA' { city: "Los Angeles" } = true
+livesInLA' _ = false
+
+fromSingleton :: forall a. a -> Array a -> a
+fromSingleton _ [x] = x
+fromSingleton default _ = default
+
