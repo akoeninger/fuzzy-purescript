@@ -24,6 +24,7 @@ data Shape
   | Rectangle Point Number Number
   | Line Point Point
   | Text Point String
+  | Clipped Point Picture
 
 showShape :: Shape -> String
 showShape (Circle c r) =
@@ -34,6 +35,8 @@ showShape (Line start end) =
   "Line [start: " <> showPoint start <> ", end: " <> showPoint end <> "]"
 showShape (Text loc text) =
   "Text [location: " <> showPoint loc <> ", text: " <> show text <> "]"
+showShape (Clipped loc pic) = 
+  "Clipped [location: " <> showPoint loc <> ", bounds: " <> show (showBounds (bounds pic)) <> "]"
 
 type Picture = Array Shape
 
@@ -80,6 +83,7 @@ shapeBounds (Text (Point { x, y }) _) = Bounds
   , bottom: y
   , right:  x
   }
+shapeBounds (Clipped _ pic) = bounds pic
 
 union :: Bounds -> Bounds -> Bounds
 union (Bounds b1) (Bounds b2) = Bounds
@@ -209,20 +213,28 @@ exampleLine = Line p1 p2
     p2 :: Point
     p2 = Point { x: 100.0, y: 50.0 }
 
+origin :: Point
+origin = Point { x: 0.0, y: 0.0 }
+
 centerCircle :: Shape
-centerCircle = Circle (Point { x: 0.0, y: 0.0}) 10.0
+centerCircle = Circle origin 10.0
 
 scaleBy2 :: Shape -> Shape
-scaleBy2 (Circle c r) = Circle c (r * 2.0)
-scaleBy2 (Rectangle c w h) = Rectangle c (w * 2.0) (h * 2.0)
+scaleBy2 (Circle _ r) = Circle origin (r * 2.0)
+scaleBy2 (Rectangle _ w h) = Rectangle origin (w * 2.0) (h * 2.0)
 scaleBy2 (Line (Point start) (Point end)) = Line scaledStart scaledEnd
   where
-    diff = { x: (end.x - start.x) / 2.0, y: (end.y - start.y) / 2.0 }
-    scaledStart = Point { x: start.x - diff.x, y: start.y - diff.y }
-    scaledEnd = Point { x: end.x + diff.x, y: end.y + diff.y }
-scaleBy2 (Text (Point loc) text) = Text (Point { x: loc.x * 2.0, y: loc.y * 2.0 }) text
+    diff = { x: end.x - start.x, y: end.y - start.y }
+    scaledStart = Point { x: -diff.x, y: -diff.y }
+    scaledEnd = Point { x: diff.x, y: diff.y }
+scaleBy2 (Text _ text) = Text origin text
+scaleBy2 (Clipped _ picture) = Clipped origin (map (scaleBy2) picture)
 
 extractText :: Shape -> Maybe String
 extractText (Text loc text) = Just text
 extractText _ = Nothing
- 
+
+area :: Shape -> Number
+area (Circle _ r) = Math.pi * r `Math.pow` 2.0
+area (Rectangle c w h) = w * h
+area _ = 0.0
