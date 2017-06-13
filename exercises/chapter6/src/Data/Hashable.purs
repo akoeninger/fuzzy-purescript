@@ -5,13 +5,16 @@ module Data.Hashable
   , hash
   , hashEqual
   , combineHashes
+  , Hour
+  , hour
   ) where
 
 import Prelude
 
+import Data.Array 
 import Data.Char (toCharCode)
 import Data.Either (Either(..))
-import Data.Foldable (foldl)
+import Data.Foldable (foldl, foldr)
 import Data.Function (on)
 import Data.Maybe (Maybe(..))
 import Data.String (toCharArray)
@@ -62,3 +65,18 @@ instance hashTuple :: (Hashable a, Hashable b) => Hashable (Tuple a b) where
 instance hashEither :: (Hashable a, Hashable b) => Hashable (Either a b) where
   hash (Left a) = hashCode 0 `combineHashes` hash a
   hash (Right b) = hashCode 1 `combineHashes` hash b
+
+newtype Hour = Hour Int
+
+hour :: Int -> Hour
+hour n = Hour n
+
+instance showHour :: Show Hour where
+  show (Hour n) = "Hour: " <> show (mod n 12)
+
+instance eqHour :: Eq Hour where
+  eq (Hour n) (Hour m) = mod n 12 == mod m 12
+
+instance hashHour :: Hashable Hour where
+  hash (Hour n) = hash (mod n 12)
+
