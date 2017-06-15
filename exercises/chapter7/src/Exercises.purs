@@ -7,6 +7,7 @@ import Control.Apply
 import Data.List
 import Data.Maybe
 
+
 combineList :: forall f a. Applicative f => List (f a) -> f (List a)
 combineList Nil = pure Nil
 combineList (Cons x xs) = Cons <$> x <*> combineList xs
