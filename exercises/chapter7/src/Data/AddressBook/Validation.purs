@@ -7,7 +7,7 @@ import Data.Maybe (Maybe(..))
 import Data.String (length)
 import Data.String.Regex (Regex, test, regex)
 import Data.String.Regex.Flags (noFlags)
-import Data.Traversable (traverse)
+import Data.Traversable (class Traversable, sequence, traverse) 
 import Data.Validation.Semigroup (V, unV, invalid)
 import Partial.Unsafe (unsafePartial)
 
@@ -77,4 +77,7 @@ nonWhitespace _ str | test nonWhitespaceRegex str = pure unit
 nonWhitespace field _ = invalid ["Field '" <> field <> "' cannot be whitespace"]
 
 
-
+traverseViaSeq :: forall a b t f. (Traversable t, Applicative f) => (a -> f b) -> t a -> f (t b)
+traverseViaSeq f t = sequence (map f t)
+sequenceViaTra :: forall a t f. (Traversable t, Applicative f) => t (f a) -> f (t a)
+sequenceViaTra = traverse id
