@@ -11,6 +11,10 @@ import Data.Traversable
 
 data Tree a = Leaf | Branch (Tree a) a (Tree a)
 
+instance showTree :: Show a => Show (Tree a) where
+  show Leaf = "Leaf"
+  show (Branch l x r) = "Branch[" <> show x <> " Left: " <> show l <> " Right: " <> show r <> "]"
+
 instance functorTree :: Functor Tree where
   map _ Leaf = Leaf
   map f (Branch lft x rht) = Branch (f <$> lft) (f x) (f <$> rht)
@@ -23,3 +27,7 @@ instance foldableTree :: Foldable Tree where
   foldMap f (Branch l x r) = foldMap f l <> f x <> foldMap f r
   foldMap f Leaf = mempty
 
+instance inOrderTraversableTree :: Traversable Tree where
+  traverse _ Leaf = pure Leaf
+  traverse f (Branch l x r) = Branch <$> traverse f l <*> f x <*> traverse f r
+  sequence = traverse id
