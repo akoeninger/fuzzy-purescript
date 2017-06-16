@@ -3,6 +3,7 @@ module Data.AddressBook.Validation where
 import Prelude
 import Data.AddressBook (Address(..), Person(..), PhoneNumber(..), address, person, phoneNumber)
 import Data.Either (Either(..))
+import Data.Maybe (Maybe(..))
 import Data.String (length)
 import Data.String.Regex (Regex, test, regex)
 import Data.String.Regex.Flags (noFlags)
@@ -61,7 +62,7 @@ validatePerson :: Person -> V Errors Person
 validatePerson (Person o) =
   person <$> (nonWhitespace "First Name" o.firstName *> pure o.firstName)
          <*> (nonWhitespace "Last Name"  o.lastName  *> pure o.lastName)
-         <*> validateAddress o.homeAddress
+         <*> traverse validateAddress o.homeAddress
          <*> (arrayNonEmpty "Phone Numbers" o.phones *> traverse validatePhoneNumber o.phones)
 
 validatePerson' :: Person -> Either Errors Person

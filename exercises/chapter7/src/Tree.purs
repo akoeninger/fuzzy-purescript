@@ -31,3 +31,4 @@ instance inOrderTraversableTree :: Traversable Tree where
   traverse _ Leaf = pure Leaf
   traverse f (Branch l x r) = Branch <$> traverse f l <*> f x <*> traverse f r
   sequence = traverse id
+
