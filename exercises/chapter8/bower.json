@@ -24,5 +24,12 @@
     "purescript-react": "^2.0.0",
     "purescript-strings": "^2.0.0",
     "purescript-validation": "^2.0.0"
+  },
+  "resolutions": {
+    "purescript-eff": "^2.0.0",
+    "purescript-prelude": "^2.1.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0"
   }
 }
