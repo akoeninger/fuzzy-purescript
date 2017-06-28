@@ -2,11 +2,21 @@ module Etc where
 
 import Prelude
 import Control.Monad
+import Control.Monad.Eff
+import Control.Monad.Eff.Exception
 import Control.MonadPlus
 import Control.MonadZero
 import Data.Array
 import Data.List (List(..), (:))
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
+
+safeDivide :: Int -> Int -> Maybe Int
+safeDivide _ 0 = Nothing
+safeDivide a b = Just (a / b)
+
+safeDivide' :: forall eff . Int -> Int -> Eff (err :: EXCEPTION | eff) Int
+safeDivide' _ 0 = throwException (error "Divide by Zero")
+safeDivide' a b = pure (a / b)
 
 third :: forall a. Array a -> Maybe a
 third a = do
