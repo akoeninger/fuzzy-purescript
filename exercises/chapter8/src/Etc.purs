@@ -4,11 +4,15 @@ import Prelude
 import Control.Monad
 import Control.Monad.Eff
 import Control.Monad.Eff.Exception
+import Control.Monad.Eff.Random
+import Control.Monad.ST
 import Control.MonadPlus
 import Control.MonadZero
 import Data.Array
+import Data.Int (floor,toNumber)
 import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
+import Math
 
 safeDivide :: Int -> Int -> Maybe Int
 safeDivide _ 0 = Nothing
@@ -34,3 +38,19 @@ filterM f (a : as) = do
   xs <- filterM f as
   pure if keep then a : xs else xs
 
+estimatePi :: Number -> Eff (random :: RANDOM) Number
+estimatePi prescision = runST do
+  ref <- newSTRef 0
+  forE 0 (floor prescision) \_ -> do
+    x <- random
+    y <- random
+    modifySTRef ref \o ->
+      if (isInCircle $ distanceFromCenter x y) then  o + 1 else o
+    pure unit
+  pointsInsideCircle <- readSTRef ref
+  pure ((toNumber (4 * pointsInsideCircle)) / prescision)
+  where
+    distanceFromCenter :: Number -> Number -> Number
+    distanceFromCenter x y = ((x - 0.5) `pow` 2.0) + ((y - 0.5) `pow` 2.0)
+    isInCircle :: Number -> Boolean
+    isInCircle d = d < (0.5 `pow` 2.0)
