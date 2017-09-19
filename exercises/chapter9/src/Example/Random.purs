@@ -8,7 +8,7 @@ import Data.Array ((..))
 import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
 import Graphics.Canvas (CANVAS, Context2D, strokePath, fillPath, arc, setStrokeStyle,
-                        setFillStyle, getContext2D, getCanvasElementById)
+                        setFillStyle, getContext2D, getCanvasElementById, translate, rotate)
 import Math as Math
 import Partial.Unsafe (unsafePartial)
 
@@ -23,6 +23,15 @@ strokeAndFillPath fillStyle strokeStyle ctx canEff = do
   setStrokeStyle strokeStyle ctx
   canEff 
   
+rotateAround :: forall eff
+  . { x :: Number, y :: Number }
+  -> Number
+  -> Context2D
+  -> Eff (canvas :: CANVAS | eff) Context2D
+rotateAround center angle ctx = translate { translateX: 0.0, translateY: 0.0 } ctx
+  >>= translate { translateX: center.x, translateY: center.y }
+  >>= rotate angle
+
 
 main :: Eff (canvas :: CANVAS, random :: RANDOM) Unit
 main = void $ unsafePartial do

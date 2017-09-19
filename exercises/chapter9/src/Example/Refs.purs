@@ -27,7 +27,7 @@ render count ctx = do
     , h: 600.0
     }
 
-  setFillStyle "#00FF00" ctx
+  setFillStyle "RGB(0, 200, 0)" ctx
 
   withContext ctx do
     let scaleX = Math.sin (toNumber count * Math.pi / 4.0) + 1.5
